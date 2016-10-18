@@ -32,10 +32,10 @@ object UserHttpEndpoint {
     case req @ POST -> Root / "users" =>
       req.decode[UserForm] { userForm =>
         val user = User(Random.nextInt(1000), userForm.username, userForm.email, userForm.age)
-        UserService.save(user).flatMap(_ => Created(s"User created >> $user")).handleWith(errorHandler)
+        UserService.save(user).flatMap(_ => Created(s"User with id: ${user.id}")).handleWith(errorHandler)
       }
     case GET -> Root / "users" / LongVar(id) =>
-      UserService.find(id).flatMap(Ok(_)).handleWith(errorHandler)
+      Ok(UserService.find(id)).handleWith(errorHandler)
     case DELETE -> Root / "users" / LongVar(id) =>
       UserService.remove(id).flatMap(_ => NoContent()).handleWith(errorHandler)
     case req @ PUT -> Root / "users" / LongVar(id) =>
